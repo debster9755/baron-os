@@ -42,7 +42,8 @@ import {
   Zap,
 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { activity, defaultGeneratedContent, initialArtifacts, initialCampaigns, initialGuardrails, signals as demoSignals } from "@/lib/demo-data";
+import { activity, defaultGeneratedContent, initialArtifacts, initialCampaigns, initialGuardrails, metricTrends, performanceTrend, signals as demoSignals } from "@/lib/demo-data";
+import { BarChart, Sparkline, TrendChart } from "@/components/charts";
 import { createCampaignBrief, scoreContent } from "@/lib/generate";
 import type { Artifact, Campaign, Guardrail, NavKey, Signal as SignalType, Toast } from "@/lib/types";
 
@@ -97,6 +98,20 @@ const categoryClass: Record<SignalType["category"], string> = {
   Culture: "tag-violet",
   Customer: "tag-green",
   Platform: "tag-blue",
+};
+
+const categoryColor: Record<SignalType["category"], string> = {
+  Competitor: "var(--coral)",
+  Culture: "var(--violet)",
+  Customer: "var(--green)",
+  Platform: "var(--blue)",
+};
+
+const toneColor: Record<string, string> = {
+  coral: "var(--coral)",
+  green: "var(--green)",
+  violet: "var(--violet)",
+  blue: "var(--blue)",
 };
 
 const statusClass: Record<Campaign["status"], string> = {
@@ -403,6 +418,23 @@ function CommandCenter({
 }) {
   const approved = campaigns.filter((campaign) => campaign.status === "Approved").length;
 
+  const categoryStrength = useMemo(() => {
+    const groups: Record<SignalType["category"], number[]> = {
+      Competitor: [],
+      Culture: [],
+      Customer: [],
+      Platform: [],
+    };
+    signals.forEach((signal) => {
+      groups[signal.category].push(signal.relevance);
+    });
+    return (Object.keys(groups) as Array<SignalType["category"]>).map((category) => {
+      const values = groups[category];
+      const average = values.length ? Math.round(values.reduce((sum, value) => sum + value, 0) / values.length) : 0;
+      return { label: category, value: average, color: categoryColor[category] };
+    });
+  }, [signals]);
+
   return (
     <div className="dashboard-grid">
       <section className="hero-intelligence">
@@ -443,10 +475,21 @@ function CommandCenter({
       </section>
 
       <section className="metric-grid">
-        <MetricCard icon={Signal} label="Signals ranked" value="48" change="+12 today" tone="coral" />
-        <MetricCard icon={ShieldCheck} label="Brand pass rate" value="94%" change="+6% this week" tone="green" />
-        <MetricCard icon={Users} label="Active creators" value="08" change="3 in review" tone="violet" />
-        <MetricCard icon={Rocket} label="Assets shipped" value={String(artifacts.length + 22).padStart(2, "0")} change="7 this month" tone="blue" />
+        <MetricCard icon={Signal} label="Signals ranked" value="48" change="+12 today" tone="coral" trend={metricTrends.signals} />
+        <MetricCard icon={ShieldCheck} label="Brand pass rate" value="94%" change="+6% this week" tone="green" trend={metricTrends.brandFit} />
+        <MetricCard icon={Users} label="Active creators" value="08" change="3 in review" tone="violet" trend={metricTrends.creators} />
+        <MetricCard icon={Rocket} label="Assets shipped" value={String(artifacts.length + 22).padStart(2, "0")} change="7 this month" tone="blue" trend={metricTrends.assets} />
+      </section>
+
+      <section className="trends-row">
+        <div className="panel trend-chart-panel">
+          <PanelHeader eyebrow="7-day view" title="Performance trend" />
+          <TrendChart labels={performanceTrend.labels} series={performanceTrend.series} />
+        </div>
+        <div className="panel category-chart-panel">
+          <PanelHeader eyebrow="Avg. relevance" title="Signal strength by category" />
+          <BarChart data={categoryStrength} />
+        </div>
       </section>
 
       <section className="panel opportunity-panel">
@@ -542,18 +585,26 @@ function MetricCard({
   value,
   change,
   tone,
+  trend,
 }: {
   icon: typeof Signal;
   label: string;
   value: string;
   change: string;
   tone: string;
+  trend: number[];
 }) {
   return (
     <div className="metric-card">
-      <div className={`metric-icon metric-${tone}`}><Icon size={18} /></div>
+      <div className="metric-card-top">
+        <div className={`metric-icon metric-${tone}`}><Icon size={18} /></div>
+        <span className="metric-trend"><TrendingUp size={11} /> {change}</span>
+      </div>
       <small>{label}</small>
-      <div><strong>{value}</strong><span><TrendingUp size={13} /> {change}</span></div>
+      <div className="metric-card-value-row">
+        <strong>{value}</strong>
+        <Sparkline data={trend} color={toneColor[tone]} />
+      </div>
     </div>
   );
 }

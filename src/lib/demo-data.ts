@@ -156,6 +156,21 @@ export const initialArtifacts: Artifact[] = [
   },
 ];
 
+export const metricTrends = {
+  signals: [31, 34, 36, 40, 39, 44, 48],
+  brandFit: [86, 88, 89, 91, 90, 93, 94],
+  creators: [5, 6, 6, 7, 7, 8, 8],
+  assets: [14, 16, 18, 19, 21, 24, 26],
+};
+
+export const performanceTrend = {
+  labels: ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"],
+  series: [
+    { key: "signals", label: "Signals ranked", color: "var(--coral)", values: metricTrends.signals },
+    { key: "approvals", label: "Brand-safe approvals", color: "var(--green)", values: [18, 20, 23, 25, 27, 30, 33] },
+  ],
+};
+
 export const activity = [
   { action: "Opportunity promoted", detail: "AI governance → campaign studio", time: "12 min" },
   { action: "Guardrail passed", detail: "Proof, not promises / creator brief", time: "34 min" },

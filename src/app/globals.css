@@ -725,21 +725,25 @@ kbd {
 }
 
 .metric-card {
-  align-items: center;
   background: white;
   border: 1px solid var(--line);
   border-radius: 12px;
-  display: grid;
-  gap: 3px 9px;
-  grid-template-columns: 34px 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
   padding: 14px;
+}
+
+.metric-card-top {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 .metric-icon {
   align-items: center;
   border-radius: 8px;
   display: flex;
-  grid-row: 1 / 3;
   height: 34px;
   justify-content: center;
   width: 34px;
@@ -750,14 +754,24 @@ kbd {
 .metric-violet { background: #efedff; color: var(--violet); }
 .metric-blue { background: #eaf3fb; color: var(--blue); }
 
+.metric-trend {
+  align-items: center;
+  color: var(--green);
+  display: flex;
+  font-size: 8px;
+  font-weight: 700;
+  gap: 2px;
+}
+
 .metric-card > small {
   color: #89867f;
   font-size: 9px;
 }
 
-.metric-card > div:last-child {
-  align-items: baseline;
+.metric-card-value-row {
+  align-items: flex-end;
   display: flex;
+  justify-content: space-between;
   gap: 8px;
 }
 
@@ -767,12 +781,103 @@ kbd {
   font-weight: 500;
 }
 
-.metric-card div:last-child span {
-  align-items: center;
-  color: var(--green);
+.sparkline {
+  display: block;
+  flex-shrink: 0;
+}
+
+.trends-row {
+  display: grid;
+  gap: 15px;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1.6fr) minmax(220px, 1fr);
+}
+
+.trend-chart-panel,
+.category-chart-panel {
+  padding: 21px;
+}
+
+.trend-chart svg {
+  height: auto;
+  width: 100%;
+}
+
+.trend-grid-line {
+  stroke: #eeece6;
+  stroke-width: 1;
+}
+
+.trend-axis-label {
+  fill: #a6a29a;
+  font-size: 9px;
+}
+
+.chart-legend {
   display: flex;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.chart-legend span {
+  align-items: center;
+  color: #6d6b66;
+  display: inline-flex;
+  font-size: 9px;
+  gap: 6px;
+}
+
+.chart-legend i {
+  border-radius: 50%;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+}
+
+.bar-chart {
+  align-items: flex-end;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 6px;
+}
+
+.bar-chart-col {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+}
+
+.bar-chart-value {
+  color: #6d6b66;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.bar-chart-track {
+  background: #f2f0ea;
+  border-radius: 6px;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.bar-chart-fill {
+  border-radius: 6px 6px 0 0;
+  display: block;
+  margin-top: auto;
+  width: 100%;
+}
+
+.bar-chart-col small {
+  color: #96928b;
   font-size: 8px;
-  gap: 2px;
+  text-align: center;
 }
 
 .opportunity-panel,
@@ -2291,9 +2396,11 @@ label select {
   .ring-three { height: 55px; width: 55px; }
   .hero-meta { flex-wrap: wrap; gap: 12px 22px; left: 24px; right: 24px; }
   .metric-grid { grid-template-columns: 1fr 1fr; }
-  .metric-card { grid-template-columns: 30px 1fr; padding: 11px; }
+  .metric-card { padding: 11px; }
   .metric-icon { height: 30px; width: 30px; }
-  .metric-card div:last-child span { display: none; }
+  .metric-trend { display: none; }
+  .metric-card .sparkline { width: 56px; }
+  .trends-row { grid-template-columns: 1fr; }
   .opportunity-panel, .campaign-panel, .activity-panel, .quick-panel { padding: 17px; }
   .opportunity-row { grid-template-columns: 20px 1fr 39px; }
   .quick-grid { grid-template-columns: 1fr; }
